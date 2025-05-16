@@ -1,1 +1,113 @@
+openapi: 3.0.9
+info:
+  title: Article
+  version: 1.0.0
+  description: 'Article APIs.'
+  contact:
+    name: John Doe
+  license:
+    name: dummy 
+servers:
+  - url: 'www.api.com'
+    description: Backend url
+paths:
+  '/articles':
+    get:
+      tags:
+        - Article project
+      summary: Retrieves all articles.
+      description: Retrieves all articles.
+      operationId: getArticles
+      parameters:
+        - $ref: '#/components/parameters/authorizationHeader'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                description: a list of articles
+                items:
+                  $ref: '#/components/schemas/Article'
+          description: OK
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  value:
+                    code: UNAUTHORIZED
+                    message: Unable to authorize access
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internal error:
+                  value:
+                    code: INTERNAL_SERVER_ERROR
+                    message: An unexpected error occurred
+components:
+  parameters:
+    authorizationHeader:
+      in: header
+      name: Authorization
+      required: true
+      schema:
+        type: string
+        example: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+      description: "Authorization token"
+    languageHeader:
+      in: header
+      name: Accept-Language
+      required: true
+      schema:
+        type: string
+        example: "en-GB"
+      description: "Locale of the user used to select the translated value for multilingual fields"
+  schemas:
+    ErrorResponse:
+      title: Error
+      description: Describes the error response format
+      required:
+        - code
+        - message
+      type: object
+      properties:
+        code:
+          description: Error code
+          type: string
+          enum:
+            - INTERNAL_SERVER_ERROR
+            - UNKNOWN_ENDPOINT
+            - UNAUTHORIZED
+          example: INTERNAL_SERVER_ERROR
+        message:
+          description: The error message
+          type: string
+          example: "Article not found"
+    Article:
+      title: Article
+      type: object
+      description: a article object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          description: Unique identifier of the article.
+          type: string
+          example: '12345'
+        name:
+          description: Name of the article.
+          type: string
+          example: 'brush.'
 
+tags:
+  - name: Article project
+    description: Article project
